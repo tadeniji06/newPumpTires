@@ -43,11 +43,13 @@ const PresaleSection = () => {
     address: address,
   });
 
-  // Get USDC balance
-  const { data: usdcBalance } = useBalance({
+  // Get USDC balance   
+  // Get USDC balance (cast options to `any` because this project's wagmi types
+  // don't include the `token` field on the options object used here)
+  const { data: usdcBalance } = useBalance(({
     address: address,
     token: USDC_CONTRACT,
-  });
+  } as unknown) as any);
 
   // For native PLS transfers
   const { 

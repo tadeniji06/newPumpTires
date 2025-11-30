@@ -13,8 +13,8 @@ const Dashboard = () => {
 	const PRESALE_END_DATE = new Date("2025-12-05T23:59:59"); // End date
 
 	// Current progress (hardcoded for now - would come from backend/contract)
-	const [raised, setRaised] = useState(0);
-	const [contributors, setContributors] = useState(0);
+	const [raised] = useState(0);
+	const [contributors] = useState(0);
 
 	// Calculate progress percentage
 	const progressPercentage = (raised / PRESALE_TARGET) * 100;

@@ -1,6 +1,6 @@
 import { logo } from "../assets";
 import { Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
 import WalletConnectButton from "../components/WalletConnectButton";
 const Nav = () => {
@@ -10,7 +10,10 @@ const Nav = () => {
 		<nav className='text-white border-b border-gray-700 bg-[#0a0a0a]'>
 			<div className='flex items-center justify-between px-4 py-3 md:px-6'>
 				{/* Logo */}
-				<img src={logo} alt='Logo' className='h-14 w-auto' />
+				<NavLink to='/'>
+					{" "}
+					<img src={logo} alt='Logo' className='h-14 w-auto' />
+				</NavLink>
 
 				{/* Desktop Nav */}
 				<div className='hidden md:flex items-center gap-6 text-sm'>
@@ -29,7 +32,7 @@ const Nav = () => {
 
 				{/* Desktop Wallet */}
 				<div className='hidden md:block'>
-					<WalletConnectButton title="Connect Wallet"/>
+					<WalletConnectButton title='Connect Wallet' />
 				</div>
 
 				{/* Mobile menu icon */}
@@ -57,7 +60,7 @@ const Nav = () => {
 						</p>
 					</Link>
 
-					<WalletConnectButton title="Connect Wallet"/>
+					<WalletConnectButton title='Connect Wallet' />
 				</div>
 			)}
 		</nav>

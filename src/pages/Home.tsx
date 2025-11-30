@@ -7,7 +7,7 @@ const Home = () => {
 			{/* HERO */}
 			<section className='space-y-6 max-w-3xl'>
 				<h1 className='text-4xl md:text-5xl font-extrabold leading-tight'>
-					Tires <span className='text-primary-green'>Watcher</span>
+					pulseX <span className='text-primary-green'>Watch</span>
 				</h1>
 
 				<p className='text-lg text-gray-300'>
@@ -15,10 +15,11 @@ const Home = () => {
 				</p>
 
 				<p className='text-gray-400 leading-relaxed'>
-					Tires Watcher is a real-time monitoring and alert system
-					built for the Pumptires and Pulse ecosystem. Stay ahead with
-					lightning-fast alerts on new launches, whale movements,
-					high-volume trades, liquidity changes, and more.
+					pulseX Watcher is a real-time monitoring and alert system
+					built for the Pumptires and Pulse ecosystem. We track new
+					token launches, bonded tokens, big buys, sells, whale
+					movements and more, delivering fast notifications so you can
+					act earlier and smarter.
 				</p>
 
 				<div className='h-1 w-24 bg-primary-green rounded-full'></div>
@@ -28,7 +29,7 @@ const Home = () => {
 			<section className='border border-gray-800 rounded-xl p-6 md:p-10 bg-[#0c0c0c] shadow-[0_0_15px_-5px_rgba(52,208,127,0.3)]'>
 				<h2 className='text-2xl font-semibold mb-4 flex items-center gap-2'>
 					<Gem className='w-6 h-6 text-primary-green' />
-					What Tires Watcher Tracks
+					What pulseX Watch Tracks
 				</h2>
 
 				<div className='grid md:grid-cols-2 gap-3 text-gray-300'>
@@ -67,7 +68,7 @@ const Home = () => {
 				</h2>
 
 				<p className='text-gray-400 leading-relaxed'>
-					The Tires Watcher ecosystem will be powered by{" "}
+					The pulseX Watch ecosystem will be powered by{" "}
 					<span className='text-primary-green'>$XWATCH</span>, the
 					utility token unlocking deeper insights, priority alerts,
 					and premium tools.
@@ -153,8 +154,7 @@ const Home = () => {
 				</div>
 
 				<p className='text-gray-500 pt-2'>
-					Tokens are delivered immediately after the presale ends, and
-					liquidity is added right away.
+					Participants will receive their tokens immediately after the presale concludes, and liquidity will be added right after.
 				</p>
 			</section>
 

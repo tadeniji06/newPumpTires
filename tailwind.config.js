@@ -10,9 +10,9 @@ module.exports = {
 	],
 	theme: {
 		extend: {
-			colors:{
-				"primary-green":"#34d07f"
-			}
+			colors: {
+				"primary-green": "#9834ec",
+			},
 		},
 	},
 	plugins: [],

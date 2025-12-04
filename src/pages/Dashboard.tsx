@@ -9,10 +9,10 @@ import {
 
 const Dashboard = () => {
 	// Presale configuration
-	const PRESALE_TARGET = 10000; // $100,000 target
+	const PRESALE_TARGET = 10000;
 	const PRESALE_END_DATE = new Date("2025-12-05T23:59:59"); // End date
 
-	// Current progress (hardcoded for now - would come from backend/contract)
+	// Current progress
 	const [raised] = useState(0);
 	const [contributors] = useState(0);
 
@@ -191,16 +191,6 @@ const Dashboard = () => {
 
 				{/* Info Cards */}
 				<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-					{/* <div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-2'>
-						<h4 className='font-semibold text-primary-green'>
-							Soft Cap
-						</h4>
-						<p className='text-2xl font-bold'>$50,000</p>
-						<p className='text-xs text-gray-500'>
-							Minimum goal for launch
-						</p>
-					</div> */}
-
 					<div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-2'>
 						<h4 className='font-semibold text-primary-green'>
 							Hard Cap

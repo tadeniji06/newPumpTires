@@ -154,9 +154,13 @@ const Home = () => {
 				</div>
 
 				<p className='text-gray-500 pt-2'>
-					Participants will receive their tokens immediately after the presale concludes, and liquidity will be added right after.
+					Participants will receive their tokens immediately after the
+					presale concludes, and liquidity will be added right after.
 				</p>
 			</section>
+			<p className='text-center text-gray-500'>
+				$XWATCH CA: 0xbF45B9dB7B2097b429ED2BD3662E386670814aCB
+			</p>
 
 			{/* PRESALE COMPONENT */}
 			<PresaleSection />

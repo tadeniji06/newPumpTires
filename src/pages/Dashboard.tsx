@@ -1,25 +1,28 @@
 import { useState, useEffect } from "react";
 import {
-	TrendingUp,
+	// TrendingUp,
 	Target,
 	Clock,
-	Users,
+	// Users,
 	DollarSign,
 } from "lucide-react";
+import { ethers } from "ethers";
 
 const Dashboard = () => {
-	// Presale configuration
-	const PRESALE_TARGET = 10000;
-	const PRESALE_END_DATE = new Date("2025-12-05T23:59:59"); // End date
+	// ================= CONFIG =================
+	const PRESALE_TARGET = 10000; // USD
+	const PRESALE_END_DATE = new Date("2025-12-05T23:59:59");
+	const PRESALE_WALLET =
+		"0x2acf4414ded94d0dd3810aef68938348a9a8de0d";
 
-	// Current progress
-	const [raised] = useState(0);
-	const [contributors] = useState(0);
+	// ⚠️ rough estimate – replace later with real price feed
+	const PLS_TO_USD = 0.00005;
 
-	// Calculate progress percentage
-	const progressPercentage = (raised / PRESALE_TARGET) * 100;
+	const RPC_URL = "https://rpc.pulsechain.com";
 
-	// Calculate time remaining
+	// ================= STATE =================
+	const [raised, setRaised] = useState(0);
+
 	const [timeRemaining, setTimeRemaining] = useState({
 		days: 0,
 		hours: 0,
@@ -27,9 +30,38 @@ const Dashboard = () => {
 		seconds: 0,
 	});
 
+	// ================= WALLET BALANCE =================
+	useEffect(() => {
+		const provider = new ethers.JsonRpcProvider(RPC_URL);
+
+		const fetchBalance = async () => {
+			try {
+				const balanceWei = await provider.getBalance(
+					PRESALE_WALLET
+				);
+
+				const balancePLS = Number(
+					ethers.formatEther(balanceWei)
+				);
+
+				const balanceUSD = balancePLS * PLS_TO_USD;
+
+				setRaised(Math.floor(balanceUSD));
+			} catch (err) {
+				console.error("Balance fetch failed:", err);
+			}
+		};
+
+		fetchBalance();
+		const interval = setInterval(fetchBalance, 15000);
+
+		return () => clearInterval(interval);
+	}, []);
+
+	// ================= COUNTDOWN =================
 	useEffect(() => {
 		const timer = setInterval(() => {
-			const now = new Date().getTime();
+			const now = Date.now();
 			const end = PRESALE_END_DATE.getTime();
 			const distance = end - now;
 
@@ -37,12 +69,16 @@ const Dashboard = () => {
 				setTimeRemaining({
 					days: Math.floor(distance / (1000 * 60 * 60 * 24)),
 					hours: Math.floor(
-						(distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+						(distance % (1000 * 60 * 60 * 24)) /
+							(1000 * 60 * 60)
 					),
 					minutes: Math.floor(
-						(distance % (1000 * 60 * 60)) / (1000 * 60)
+						(distance % (1000 * 60 * 60)) /
+							(1000 * 60)
 					),
-					seconds: Math.floor((distance % (1000 * 60)) / 1000),
+					seconds: Math.floor(
+						(distance % (1000 * 60)) / 1000
+					),
 				});
 			}
 		}, 1000);
@@ -50,172 +86,128 @@ const Dashboard = () => {
 		return () => clearInterval(timer);
 	}, []);
 
+	const progressPercentage = Math.min(
+		(raised / PRESALE_TARGET) * 100,
+		100
+	);
+
 	return (
-		<div className='min-h-screen bg-[#0a0a0a] text-white px-4 py-8 md:px-6 lg:px-8'>
+		<div className='min-h-screen bg-[#0a0a0a] text-white px-4 py-8'>
 			<div className='max-w-6xl mx-auto space-y-8'>
 				{/* Header */}
 				<div className='text-center space-y-2'>
-					<h1 className='text-3xl md:text-4xl font-bold text-primary-green'>
+					<h1 className='text-4xl font-bold text-primary-green'>
 						Presale Dashboard
 					</h1>
 					<p className='text-gray-400'>
-						Track the progress of our token presale
+						Live on-chain wallet tracking
 					</p>
 				</div>
 
-				{/* Main Stats Grid */}
+				{/* Stats */}
 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-					{/* Total Raised */}
-					<div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-2'>
+					<div className='bg-[#111] border border-gray-800 rounded-xl p-6'>
 						<div className='flex items-center gap-2 text-gray-400'>
 							<DollarSign className='w-5 h-5' />
-							<span className='text-sm'>Total Raised</span>
+							<span>Total Raised</span>
 						</div>
 						<p className='text-3xl font-bold text-primary-green'>
 							${raised.toLocaleString()}
 						</p>
 						<p className='text-xs text-gray-500'>
-							of ${PRESALE_TARGET.toLocaleString()} goal
+							of ${PRESALE_TARGET.toLocaleString()}
 						</p>
 					</div>
 
-					{/* Progress Percentage */}
-					<div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-2'>
+					<div className='bg-[#111] border border-gray-800 rounded-xl p-6'>
 						<div className='flex items-center gap-2 text-gray-400'>
 							<Target className='w-5 h-5' />
-							<span className='text-sm'>Progress</span>
+							<span>Progress</span>
 						</div>
 						<p className='text-3xl font-bold text-primary-green'>
 							{progressPercentage.toFixed(1)}%
 						</p>
 						<p className='text-xs text-gray-500'>
-							{(PRESALE_TARGET - raised).toLocaleString()} remaining
+							${Math.max(
+								PRESALE_TARGET - raised,
+								0
+							).toLocaleString()} remaining
 						</p>
 					</div>
 
-					{/* Contributors */}
-					<div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-2'>
+					{/* <div className='bg-[#111] border border-gray-800 rounded-xl p-6'>
 						<div className='flex items-center gap-2 text-gray-400'>
 							<Users className='w-5 h-5' />
-							<span className='text-sm'>Contributors</span>
+							<span>Contributors</span>
 						</div>
 						<p className='text-3xl font-bold text-primary-green'>
 							{contributors}
 						</p>
-						<p className='text-xs text-gray-500'>Early supporters</p>
-					</div>
+						<p className='text-xs text-gray-500'>
+							Wallet-based presale
+						</p>
+					</div> */}
 
-					{/* Token Price */}
-					<div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-2'>
+					{/* <div className='bg-[#111] border border-gray-800 rounded-xl p-6'>
 						<div className='flex items-center gap-2 text-gray-400'>
 							<TrendingUp className='w-5 h-5' />
-							<span className='text-sm'>Token Price</span>
+							<span>Token Price</span>
 						</div>
 						<p className='text-3xl font-bold text-primary-green'>
 							$0.01
 						</p>
-						<p className='text-xs text-gray-500'>Presale rate</p>
-					</div>
+						<p className='text-xs text-gray-500'>
+							Presale rate
+						</p>
+					</div> */}
 				</div>
 
 				{/* Progress Bar */}
-				<div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-4'>
-					<div className='flex items-center justify-between'>
-						<h3 className='text-lg font-semibold'>
-							Presale Progress
-						</h3>
-						<span className='text-sm text-gray-400'>
-							{progressPercentage.toFixed(1)}% Complete
+				<div className='bg-[#111] border border-gray-800 rounded-xl p-6'>
+					<div className='flex justify-between mb-2'>
+						<span>Presale Progress</span>
+						<span className='text-gray-400'>
+							{progressPercentage.toFixed(1)}%
 						</span>
 					</div>
-
-					<div className='relative w-full h-6 bg-gray-800 rounded-full overflow-hidden'>
+					<div className='w-full h-6 bg-gray-800 rounded-full overflow-hidden'>
 						<div
-							className='absolute top-0 left-0 h-full bg-gradient-to-r from-primary-green to-emerald-400 transition-all duration-500 rounded-full'
-							style={{
-								width: `${Math.min(progressPercentage, 100)}%`,
-							}}
-						>
-							<div className='absolute inset-0 bg-white/20 animate-pulse'></div>
-						</div>
-					</div>
-
-					<div className='flex justify-between text-sm text-gray-400'>
-						<span>$0</span>
-						<span>${PRESALE_TARGET.toLocaleString()}</span>
+							className='h-full bg-gradient-to-r from-primary-green to-emerald-400 transition-all'
+							style={{ width: `${progressPercentage}%` }}
+						/>
 					</div>
 				</div>
 
-				{/* Countdown Timer */}
-				<div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-4'>
-					<div className='flex items-center gap-2'>
-						<Clock className='w-5 h-5 text-primary-green' />
-						<h3 className='text-lg font-semibold'>Time Remaining</h3>
+				{/* Countdown */}
+				<div className='bg-[#111] border border-gray-800 rounded-xl p-6'>
+					<div className='flex items-center gap-2 mb-4'>
+						<Clock className='text-primary-green' />
+						<h3 className='font-semibold'>Time Remaining</h3>
 					</div>
 
-					<div className='grid grid-cols-4 gap-4'>
-						<div className='text-center'>
-							<div className='bg-[#0a0a0a] border border-gray-700 rounded-lg p-4'>
-								<p className='text-3xl font-bold text-primary-green'>
-									{timeRemaining.days}
-								</p>
-								<p className='text-xs text-gray-400 mt-1'>Days</p>
-							</div>
-						</div>
-						<div className='text-center'>
-							<div className='bg-[#0a0a0a] border border-gray-700 rounded-lg p-4'>
-								<p className='text-3xl font-bold text-primary-green'>
-									{timeRemaining.hours}
-								</p>
-								<p className='text-xs text-gray-400 mt-1'>Hours</p>
-							</div>
-						</div>
-						<div className='text-center'>
-							<div className='bg-[#0a0a0a] border border-gray-700 rounded-lg p-4'>
-								<p className='text-3xl font-bold text-primary-green'>
-									{timeRemaining.minutes}
-								</p>
-								<p className='text-xs text-gray-400 mt-1'>Minutes</p>
-							</div>
-						</div>
-						<div className='text-center'>
-							<div className='bg-[#0a0a0a] border border-gray-700 rounded-lg p-4'>
-								<p className='text-3xl font-bold text-primary-green'>
-									{timeRemaining.seconds}
-								</p>
-								<p className='text-xs text-gray-400 mt-1'>Seconds</p>
-							</div>
-						</div>
+					<div className='grid grid-cols-4 gap-4 text-center'>
+						{Object.entries(timeRemaining).map(
+							([key, value]) => (
+								<div
+									key={key}
+									className='bg-[#0a0a0a] border border-gray-700 rounded-lg p-4'
+								>
+									<p className='text-3xl font-bold text-primary-green'>
+										{value}
+									</p>
+									<p className='text-xs text-gray-400 capitalize'>
+										{key}
+									</p>
+								</div>
+							)
+						)}
 					</div>
 				</div>
 
-				{/* Info Cards */}
-				<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-					<div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-2'>
-						<h4 className='font-semibold text-primary-green'>
-							Hard Cap
-						</h4>
-						<p className='text-2xl font-bold'>$10,000</p>
-						<p className='text-xs text-gray-500'>
-							Maximum presale target
-						</p>
-					</div>
-
-					<div className='bg-[#111111] border border-gray-800 rounded-xl p-6 space-y-2'>
-						<h4 className='font-semibold text-primary-green'>
-							Launch Date
-						</h4>
-						<p className='text-2xl font-bold'>TBA</p>
-						<p className='text-xs text-gray-500'>
-							After presale completion
-						</p>
-					</div>
-				</div>
-
-				{/* Status Banner */}
+				{/* Status */}
 				<div className='bg-gradient-to-r from-primary-green/10 to-emerald-400/10 border border-primary-green/30 rounded-xl p-6 text-center'>
-					<p className='text-lg font-semibold text-primary-green mb-2'>
-						🚀 Presale is Live!
+					<p className='text-lg font-semibold text-primary-green'>
+						🚀 Presale is Live
 					</p>
 					<p className='text-sm text-gray-300'>
 						Join early and secure your tokens at the best price. Don't
